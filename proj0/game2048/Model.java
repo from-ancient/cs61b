@@ -109,23 +109,29 @@ public class Model extends Observable {
         for (int row = board.size() - 1; row > 0; row--) {
             // 找到col下面的第一块非空tile
             Tile next = findTileBelow(row, col);
-            if (next == null) break; // 下面全部为空，则无需动， 该col处理完毕
+            if (next == null)
+                break; // 下面全部为空，则无需动， 该col处理完毕
 
             Tile cur = board.tile(col, row);
             if (cur == null) {
                 // 1. 当前处理 cur 为 null， 下面还有(not null)，则next上浮到这个位置
-                assert(!board.move(col, row, next));
+                assert board.tile(col, row) == null;
+                boolean ret = board.move(col, row, next);
+                assert !ret;
+                assert board.tile(col, row) != null;
                 row ++; // 再从这里处理
                 isChanged = true;
             } else if (cur.value() == next.value()) {
                 // 2. cur != null and next != null and cur.value == next.value
-                assert(board.move(col, row, next));
-                isChanged = true;
                 score += 2 * next.value();
+                boolean ret =  board.move(col, row, next);
+                assert  ret;
+                isChanged = true;
             } else if (cur.value() != next.value()) {
                 // 3. cur != null and next != null and cur.value != next.value
                 if (board.tile(col, row - 1) != next) {
-                    assert(!board.move(col, row - 1, next));
+                    boolean ret = board.move(col, row - 1, next);
+                    assert !ret;
                     isChanged = true;
                 }
             }
@@ -148,17 +154,20 @@ public class Model extends Observable {
         boolean changed;
         changed = false;
         // TODO: Modify this.board (and perhaps this.score) to account
-
-        board.setViewingPerspective(side);
+        System.out.println("Begin Side is " + side);
+        if (side != Side.NORTH)
+            board.setViewingPerspective(side);
         for (int i = 0; i < board.size(); i++) {
             if (dealWithOneRow(i))
                 changed = true;
         }
-        board.setViewingPerspective(Side.NORTH);
+        if (side != Side.NORTH)
+            board.setViewingPerspective(Side.NORTH);
         checkGameOver();
         if (changed) {
             setChanged();
         }
+        System.out.println("End Side is " + side);
         return changed;
     }
 
