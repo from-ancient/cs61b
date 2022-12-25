@@ -1,5 +1,6 @@
 package game2048;
 
+import javax.swing.border.Border;
 import java.util.Formatter;
 import java.util.Observable;
 
@@ -93,7 +94,44 @@ public class Model extends Observable {
         checkGameOver();
         setChanged();
     }
+    /* 寻找 row 下的第一个非空tile, 如果为空返回 null*/
+    public Tile findTileBelow(int row, int col) {
+        // row range 3 2 1 not include 0
+        for (int j = row - 1; j >= 0; j --)
+            if (board.tile(col, j) != null)
+                return  board.tile(col, j);
+        return null;
+    }
+    /* 处理一个 row, 返回值代表是否 changed*/
+    public boolean dealWithOneRow(int col) {
+        // Tile t = board.tile(col,  3, 2, 1);
+        boolean isChanged = false;
+        for (int row = board.size() - 1; row > 0; row--) {
+            // 找到col下面的第一块非空tile
+            Tile next = findTileBelow(row, col);
+            if (next == null) break; // 下面全部为空，则无需动， 该col处理完毕
 
+            Tile cur = board.tile(col, row);
+            if (cur == null) {
+                // 1. 当前处理 cur 为 null， 下面还有(not null)，则next上浮到这个位置
+                assert(!board.move(col, row, next));
+                row ++; // 再从这里处理
+                isChanged = true;
+            } else if (cur.value() == next.value()) {
+                // 2. cur != null and next != null and cur.value == next.value
+                assert(board.move(col, row, next));
+                isChanged = true;
+                score += 2 * next.value();
+            } else if (cur.value() != next.value()) {
+                // 3. cur != null and next != null and cur.value != next.value
+                if (board.tile(col, row - 1) != next) {
+                    assert(!board.move(col, row - 1, next));
+                    isChanged = true;
+                }
+            }
+        }
+        return isChanged;
+    }
     /** Tilt the board toward SIDE. Return true iff this changes the board.
      *
      * 1. If two Tile objects are adjacent in the direction of motion and have
@@ -109,11 +147,14 @@ public class Model extends Observable {
     public boolean tilt(Side side) {
         boolean changed;
         changed = false;
-
         // TODO: Modify this.board (and perhaps this.score) to account
-        // for the tilt to the Side SIDE. If the board changed, set the
-        // changed local variable to true.
 
+        board.setViewingPerspective(side);
+        for (int i = 0; i < board.size(); i++) {
+            if (dealWithOneRow(i))
+                changed = true;
+        }
+        board.setViewingPerspective(Side.NORTH);
         checkGameOver();
         if (changed) {
             setChanged();
@@ -138,6 +179,12 @@ public class Model extends Observable {
      * */
     public static boolean emptySpaceExists(Board b) {
         // TODO: Fill in this function.
+        for (int i = 0; i < b.size(); i++) {
+            for (int j = 0; j < b.size(); j++) {
+                if (b.tile(i, j) == null)
+                    return true;
+            }
+        }
         return false;
     }
 
@@ -148,6 +195,12 @@ public class Model extends Observable {
      */
     public static boolean maxTileExists(Board b) {
         // TODO: Fill in this function.
+        for (int i = 0; i < b.size(); i++) {
+            for (int j = 0; j < b.size(); j++) {
+                if (b.tile(i, j) != null && b.tile(i, j).value() == MAX_PIECE)
+                    return true;
+            }
+        }
         return false;
     }
 
@@ -157,8 +210,30 @@ public class Model extends Observable {
      * 1. There is at least one empty space on the board.
      * 2. There are two adjacent tiles with the same value.
      */
+    public static  boolean checkAdjTile(int col1, int row1, int col2, int row2, Board b) {
+        return b.tile(col1, row1).value() == b.tile(col2, row2).value();
+    }
     public static boolean atLeastOneMoveExists(Board b) {
         // TODO: Fill in this function.
+        /* 1. There is at least one empty space on the board. */
+        if (emptySpaceExists(b)) {
+            return true;
+        }
+        /* 2.There are two adjacent tiles with the same value. */
+        // 1) from bottom to top
+        for (int i = 0; i < b.size(); i++) {
+            for (int j = 0; j < b.size() - 1; j++) {
+                if (checkAdjTile(i, j, i, j + 1, b))
+                    return true;
+            }
+        }
+        // 2) from left to right
+        for (int i = 0; i < b.size() - 1; i++) {
+            for (int j = 0; j < b.size(); j++) {
+                if (checkAdjTile(i, j, i + 1, j, b))
+                    return true;
+            }
+        }
         return false;
     }
 
