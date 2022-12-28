@@ -20,6 +20,7 @@ public class Primes {
      */
     public static boolean isPrime(int n) {
         // Corner cases
+
         if (n <= 1 || n == 4) return false;
         if (n <= 3) return true;
 
