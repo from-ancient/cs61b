@@ -1,5 +1,4 @@
 package timingtest;
-import com.sun.tools.internal.xjc.generator.annotation.spec.XmlSeeAlsoWriter;
 import edu.princeton.cs.algs4.Stopwatch;
 
 /**
