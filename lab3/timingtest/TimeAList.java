@@ -1,4 +1,5 @@
 package timingtest;
+import com.sun.tools.internal.xjc.generator.annotation.spec.XmlSeeAlsoWriter;
 import edu.princeton.cs.algs4.Stopwatch;
 
 /**
@@ -23,5 +24,23 @@ public class TimeAList {
 
     public static void timeAListConstruction() {
         // TODO: YOUR CODE HERE
+        AList<Integer> Ns = new AList<Integer>();
+        AList<Double> times = new AList<Double>();
+        AList<Integer> opCounts = new AList<Integer>();
+
+
+        for  (int bunch = 1000; bunch <= 128000; bunch *= 2) {
+            /* for branch i = 1000, 2000, ... 128000, test its proformane */
+            Stopwatch sw = new Stopwatch(); // test start
+            AList<Integer> lst = new AList<Integer>();
+            for (int i = 0; i < bunch; i++) {
+                lst.addLast(i);
+            }
+            /* record the result */
+            times.addLast(sw.elapsedTime()); // test end
+            Ns.addLast(bunch);
+            opCounts.addLast(bunch);
+        }
+        printTimingTable(Ns, times, opCounts);
     }
 }
