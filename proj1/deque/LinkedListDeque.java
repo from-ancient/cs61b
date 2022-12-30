@@ -1,6 +1,5 @@
 package deque;
 
-import afu.org.checkerframework.checker.oigj.qual.O;
 import org.junit.Assert;
 import java.util.Iterator;
 
