@@ -77,7 +77,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
                 front = 0;
             size --;
 
-            if((R = (double) size / maxSize) < 0.25) {
+            if((R = (double) size / maxSize) < 0.25 && size >= 16) {
                 // System.out.println("down size !");
                 reSizing(maxSize / 2);
             }
@@ -93,7 +93,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
            size --;
            ret = items[tail];
 
-            if((R = (double) size / maxSize) < 0.25) {
+            if((R = (double) size / maxSize) < 0.25 && size >= 16) {
                 // System.out.println("down size !");
                 reSizing(maxSize / 2);
             }

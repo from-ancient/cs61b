@@ -152,5 +152,22 @@ public class ArrayDequeTest {
         ad.addLast(999);
         ad.printDeque();
     }
+    @Test
+    public void fillUpEmptyfillUp() {
+
+        ArrayDeque<Integer> lld1 = new ArrayDeque<Integer>();
+        int N = 1000000;
+
+        for (int i = 0; i < N; i++) {
+            lld1.addFirst(i);
+        }
+        for (int i = 0; i < N; i++) {
+            lld1.removeFirst();
+        }
+        for (int i = 0; i < N; i++) {
+            lld1.addFirst(i);
+        }
+
+    }
 }
 
