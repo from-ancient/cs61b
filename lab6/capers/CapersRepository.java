@@ -1,7 +1,7 @@
 package capers;
 
 import java.io.File;
-import static capers.Utils.*;
+import java.io.IOException;
 
 /** A repository for Capers 
  * @author TODO
@@ -18,8 +18,9 @@ public class CapersRepository {
     static final File CWD = new File(System.getProperty("user.dir"));
 
     /** Main metadata folder. */
-    static final File CAPERS_FOLDER = null; // TODO Hint: look at the `join`
-                                            //      function in Utils
+    // TODO Hint: look at the `join` function in Utils
+    static final File CAPERS_FOLDER = Utils.join(CWD, ".capers");
+    static final File story = Utils.join(CAPERS_FOLDER, "story");
 
     /**
      * Does required filesystem operations to allow for persistence.
@@ -30,8 +31,19 @@ public class CapersRepository {
      *    - dogs/ -- folder containing all of the persistent data for dogs
      *    - story -- file containing the current story
      */
-    public static void setupPersistence() {
+    public static void setupPersistence() throws IOException {
         // TODO
+        /* mkdir .capers and .capers/dogs */
+        if(!CAPERS_FOLDER.exists()) {
+            CAPERS_FOLDER.mkdir();
+        }
+        if (!Dog.DOG_FOLDER.exists()) {
+            Dog.DOG_FOLDER.mkdir();
+        }
+        /* mk_file story and so on*/
+       if (!story.exists()) {
+           story.createNewFile();
+       }
     }
 
     /**
@@ -41,6 +53,13 @@ public class CapersRepository {
      */
     public static void writeStory(String text) {
         // TODO
+        if (story.length() == 0)
+            Utils.writeContents(story,  text);
+        else
+            Utils.writeContents(story, Utils.readContentsAsString(story) + "\n" + text);
+
+        /* display the whole content */
+        System.out.println(Utils.readContentsAsString(story));
     }
 
     /**
@@ -48,8 +67,21 @@ public class CapersRepository {
      * three non-command arguments of args (name, breed, age).
      * Also prints out the dog's information using toString().
      */
-    public static void makeDog(String name, String breed, int age) {
+    public static void makeDog(String name, String breed, int age) throws IOException {
         // TODO
+        boolean isDup = false;
+        String[] strings = Dog.DOG_FOLDER.list();
+        for (String s : strings) {
+            if (s.equals(name)) {
+                isDup = true;
+                break;
+            }
+        }
+        if (isDup) return;
+
+        Dog dog = new Dog(name, breed, age);
+        dog.saveDog();
+        System.out.println(dog.toString());
     }
 
     /**
@@ -58,7 +90,11 @@ public class CapersRepository {
      * Chooses dog to advance based on the first non-command argument of args.
      * @param name String name of the Dog whose birthday we're celebrating.
      */
-    public static void celebrateBirthday(String name) {
+    public static void celebrateBirthday(String name) throws IOException {
         // TODO
+        Dog dog = Dog.fromFile(name);
+        assert dog != null;
+        dog.haveBirthday();
+        dog.saveDog();
     }
 }
