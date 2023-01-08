@@ -142,12 +142,4 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
     public Iterator<K> iterator() {
         return null;
     }
-    @Override
-    public void forEach(Consumer<? super K> action) {
-        Map61B.super.forEach(action);
-    }
-    @Override
-    public Spliterator<K> spliterator() {
-        return Map61B.super.spliterator();
-    }
 }
