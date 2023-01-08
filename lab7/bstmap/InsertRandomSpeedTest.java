@@ -1,16 +1,19 @@
 package bstmap;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.TreeMap;
 import java.io.IOException;
 import java.util.Scanner;
 import edu.princeton.cs.algs4.Stopwatch;
 
+
 /** Performs a timing test on three different set implementations.
  *  @author Josh Hug
  *  @author Brendan Hu
  */
 public class InsertRandomSpeedTest {
+    private static final File file = new File("./speedTestResults.txt");
     /**
         Requests user input and performs tests of three different set
         implementations. ARGS is unused.
