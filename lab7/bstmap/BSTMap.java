@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
-public class BSTMap<K extends Comparable, V> implements Map61B<K, V>{
+public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
 
     private Node root;
 
